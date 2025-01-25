@@ -1,46 +1,48 @@
-from requests import Session
+from urllib3 import HTTPSConnectionPool
 from time import perf_counter
+from importlib.metadata import version
 
+__version__ = version("spydtest")
 
-TIMEOUT = 10
-DOWNLOAD_SIZE = 1024 * 1024 * 200  # 200M
 CHUNK_SIZE = 1024 * 1024 * 2  # 2M
-
-# TODO: add user-agent like spydtest/0.0.1
+DOWNLOAD_SIZE = 1024 * 1024 * 256  # 256M
+MAX_TEST_TIME = 10
 
 # TODO: get a server from speedtest.net
-SERVER_URL = "https://warsaw.netia.pl.prod.hosts.ooklaserver.net:8080/download"
+HOST = "warsaw.netia.pl.prod.hosts.ooklaserver.net:8080"
 
 
 def main():
-    # TODO: find something faster than requests, maybe just urllib3
-    session = Session()
+    pool = HTTPSConnectionPool(HOST, headers={"User-Agent": f"spydtest/{__version__}"})
 
-    latency_start = perf_counter()
+    start_time = perf_counter()
+    pool.request("GET", "/hello")
+    latency = perf_counter() - start_time
 
-    request = session.get(SERVER_URL, params={"size": DOWNLOAD_SIZE}, stream=True)
+    print(f"Latency: {latency * 1000:.2f} ms")
 
-    print(f"latency {(perf_counter() - latency_start) * 1000:.2f} ms")
+    response = pool.request(
+        "GET", "/download", fields={"size": str(DOWNLOAD_SIZE)}, preload_content=False
+    )
 
-    time_start = perf_counter()
-    total_data = b""
+    total_data = 0
+    start_download_time = perf_counter()
 
-    for chunk in request.iter_content(chunk_size=CHUNK_SIZE):
-        total_data += chunk
+    for chunk in response.stream(CHUNK_SIZE):
+        total_data += len(chunk)
 
-        time_elapsed = perf_counter() - time_start
-        bytes_per_second = len(total_data) / time_elapsed
+        time_elapsed = perf_counter() - start_download_time
+        speed = total_data / time_elapsed
 
-        print(f"\r{bytes_per_second / 1024 / 1024:.2f} MB/s", end=" ")
+        print(f"\rSpeed {speed / 1024 / 1024:.2f} MB/s", end="", flush=True)
 
-        if time_elapsed > TIMEOUT:
+        if time_elapsed > MAX_TEST_TIME:
             break
 
+    download_time = perf_counter() - start_download_time
+    speed = (total_data / 1024 / 1024) / download_time
+
     print("\u2705")  # tick symbol
-
-    total_time = perf_counter() - time_start
-    total_speed = len(total_data) / total_time / 1024 / 1024
-
-    print(f"downloaded data {len(total_data) // 1024}K")
-    print(f"download time {total_time:.2f}s")
-    print(f"total speed {total_speed:.2f} MB/s")
+    print(f"Downloaded data: {total_data / 1024 / 1024:.2f} MB")
+    print(f"Download time: {download_time:.2f}s")
+    print(f"Average download speed: {speed:.2f} MB/s")
