@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spydtest"
+version = "0.0.1"
+description = "Test internet speed"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "oskvr37" }]
+classifiers = [
+  "Environment :: Console",
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "requests>=2.32.3",
+]
+
+[project.urls]
+homepage = "https://github.com/oskvr37/spydtest"
+
+[project.scripts]
+spydtest = "spydtest:main"
