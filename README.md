@@ -1,10 +1,12 @@
 # spydtest
+
 Test internet speed using Python
 
 ```bash
 $ spydtest
-44.27 MB/s ✅
-downloaded data 25600K
-download time 0.56s
-total speed 44.27 MB/s
+Latency: 50.41 ms
+Speed 73.09 MB/s✅
+Downloaded data: 256.00 MB
+Download time: 3.50s
+Average download speed: 73.09 MB/s
 ```
