@@ -7,6 +7,8 @@ name = "spydtest"
 version = "0.0.2"
 description = "Test internet speed"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.11"
 authors = [{ name = "oskvr37" }]
 classifiers = [
