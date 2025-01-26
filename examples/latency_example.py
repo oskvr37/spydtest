@@ -12,15 +12,13 @@ def measureLatency(server: Server) -> float:
     )
 
     COUNT = 4
-    measurements = 0.0
+
+    start_time = perf_counter()
 
     for _ in range(COUNT):
-        start = perf_counter()
         pool.request("GET", "/hello")
-        end = perf_counter() - start
-        measurements += end
 
-    return measurements / COUNT
+    return (perf_counter() - start_time) / COUNT
 
 
 def main():
