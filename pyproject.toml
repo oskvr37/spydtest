@@ -1,20 +1,20 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=75.8.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "spydtest"
-version = "0.0.2"
+version = "0.0.3"
 description = "Test internet speed"
 readme = "README.md"
-license = "MIT"
-license-files = ["LICENSE"]
+license = { file = "LICENSE" }
 requires-python = ">=3.11"
 authors = [{ name = "oskvr37" }]
 classifiers = [
   "Environment :: Console",
   "Programming Language :: Python :: 3",
   "Operating System :: OS Independent",
+  "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
   "urllib3>=2.3.0",
