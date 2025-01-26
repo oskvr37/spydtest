@@ -1,5 +1,8 @@
 from urllib3 import HTTPSConnectionPool
 from time import perf_counter
+
+from spydtest.api import getServers
+
 from importlib.metadata import version
 
 __version__ = version("spydtest")
@@ -8,13 +11,19 @@ CHUNK_SIZE = 1024 * 1024 * 2  # 2M
 DOWNLOAD_SIZE = 1024 * 1024 * 256  # 256M
 MAX_TEST_TIME = 10
 
-# TODO: get a server from speedtest.net
-# https://www.speedtest.net/api/js/servers?limit=5
-HOST = "warsaw.netia.pl.prod.hosts.ooklaserver.net:8080"
-
 
 def main():
-    pool = HTTPSConnectionPool(HOST, headers={"User-Agent": f"spydtest/{__version__}"})
+    servers = getServers()
+
+    server = servers[0]
+
+    print(
+        f"Server: {server.sponsor} in {server.country}, {server.name}, {server.distance} km"
+    )
+
+    pool = HTTPSConnectionPool(
+        server.host, headers={"User-Agent": f"spydtest/{__version__}"}
+    )
 
     # TODO: handle request errors
     pool.request("GET", "/hello")
