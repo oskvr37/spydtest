@@ -36,7 +36,7 @@ def main():
         time_elapsed = perf_counter() - start_download_time
         speed = total_data / time_elapsed
 
-        print(f"\rSpeed {speed / 1024 / 1024:.2f} MB/s", end="", flush=True)
+        print(f"\rSpeed: {speed / 1024 / 1024:.2f} MB/s", end="", flush=True)
 
         if time_elapsed > MAX_TEST_TIME:
             break
