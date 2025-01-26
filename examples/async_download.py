@@ -1,12 +1,14 @@
 import asyncio
-
+from pydantic import TypeAdapter
 from time import perf_counter
 from httpx import AsyncClient
 from spydtest.api import getServers, Server
+from typing import List
 
 DOWNLOAD_SIZE = 1024 * 1024 * 32
 MAX_TEST_TIME = 10
-SERVERS_COUNT = 5
+SERVERS_COUNT = 3
+FROM_FILE = False
 
 
 class DownloadTester:
@@ -42,7 +44,6 @@ class DownloadTester:
 
                         if (perf_counter() - self.time_start) > MAX_TEST_TIME:
                             self.is_timeout = True
-
                             break
 
                     current_data, current_time, server = self.servers[server.id]
@@ -60,7 +61,13 @@ class DownloadTester:
 
 
 async def main():
-    servers = getServers(limit=SERVERS_COUNT)
+    if FROM_FILE:
+        type_adapter = TypeAdapter(List[Server])
+        with open("servers.json", encoding="utf-8") as f:
+            servers = type_adapter.validate_json(f.read())[:SERVERS_COUNT]
+    else:
+        servers = getServers(limit=SERVERS_COUNT)
+
     tester = DownloadTester()
 
     tasks = [tester.testServerDownload(server) for server in servers]
@@ -74,10 +81,14 @@ async def main():
     print(" \u2714")  # tick symbol
     print(f"Downloaded data: {tester.total_data / 1024 / 1024:.2f} MB")
 
-    for server_id in tester.servers:
-        data, time, server = tester.servers[server_id]
+    sorted_servers = sorted(
+        tester.servers.items(),
+        key=lambda x: x[1][0] / x[1][1],
+    )
 
-        print(f"{server.host} {data / time / 1024 / 1024:.2f} MB/s")
+    for _, (data, time, server) in sorted_servers:
+        speed = data / time / 1024 / 1024
+        print(f"{server.host} \033[0;32m{speed:.2f} MB/s\033[0m")
 
 
 if __name__ == "__main__":

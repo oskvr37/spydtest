@@ -1,7 +1,9 @@
+import json
 from spydtest import __version__
 from spydtest.api import getServers, Server
 from urllib3 import HTTPSConnectionPool
 from time import perf_counter
+from typing import Any
 
 
 def measureLatency(server: Server) -> float:
@@ -28,8 +30,14 @@ def main():
 
     sorted_results = sorted(latency_results, key=lambda x: x[1], reverse=True)
 
+    fastest_servers: list[dict[str, Any]] = []
+
     for server, latency in sorted_results:
         print(f"{server.host} \033[0;32m{latency * 1000:.2f} ms\033[0m")
+        fastest_servers.insert(0, server.model_dump())
+
+    with open("servers.json", "w", encoding="utf-8") as f:
+        json.dump(fastest_servers, f, indent=2)
 
 
 if __name__ == "__main__":
