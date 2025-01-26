@@ -9,21 +9,23 @@ DOWNLOAD_SIZE = 1024 * 1024 * 256  # 256M
 MAX_TEST_TIME = 10
 
 # TODO: get a server from speedtest.net
+# https://www.speedtest.net/api/js/servers?limit=5
 HOST = "warsaw.netia.pl.prod.hosts.ooklaserver.net:8080"
 
 
 def main():
     pool = HTTPSConnectionPool(HOST, headers={"User-Agent": f"spydtest/{__version__}"})
 
-    start_time = perf_counter()
+    # TODO: handle request errors
     pool.request("GET", "/hello")
-    latency = perf_counter() - start_time
 
-    print(f"Latency: {latency * 1000:.2f} ms")
-
+    latency_start_time = perf_counter()
     response = pool.request(
         "GET", "/download", fields={"size": str(DOWNLOAD_SIZE)}, preload_content=False
     )
+    latency = perf_counter() - latency_start_time
+
+    print(f"Latency: {latency * 1000:.2f} ms")
 
     total_data = 0
     start_download_time = perf_counter()
@@ -42,7 +44,7 @@ def main():
     download_time = perf_counter() - start_download_time
     speed = (total_data / 1024 / 1024) / download_time
 
-    print("\u2705")  # tick symbol
+    print(" \u2714")  # tick symbol
     print(f"Downloaded data: {total_data / 1024 / 1024:.2f} MB")
     print(f"Download time: {download_time:.2f}s")
     print(f"Average download speed: {speed:.2f} MB/s")
