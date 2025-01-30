@@ -1,3 +1,0 @@
-- Servers with the lowest latency deliver the best performance for single-connection downloads.
-- Servers with the highest latency contribute the most to multi-connection downloads.
-- Among the lowest-latency servers, 3-4 of them have a comparable download share.
