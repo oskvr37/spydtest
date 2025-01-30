@@ -7,3 +7,9 @@ $ spydtest
 ↓ Download ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 584.75 Mbps
 ↑ Upload ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 104.37 Mbps
 ```
+
+# installation
+
+```bash
+pip install spydtest
+```
