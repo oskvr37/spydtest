@@ -1,10 +1,12 @@
 import logging
+import argparse
 
 from rich.progress import Progress, TextColumn, BarColumn
 from rich.console import Console
 from rich.theme import Theme
 from rich.logging import RichHandler
 
+from spydtest import __version__
 from spydtest.cloudflare import CloudflareDownload, CloudflareUpload
 
 
@@ -47,6 +49,26 @@ class RichCloudflareUpload(CloudflareUpload):
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        prog="spydtest",
+        description=f"spydtest v{__version__} - test connection speed with Cloudflare.",
+    )
+
+    parser.add_argument(
+        "--download-size",
+        "-ds",
+        type=int,
+        help="Download size.",
+        metavar="MB",
+        default=128,
+    )
+
+    parser.add_argument(
+        "--upload-size", "-us", type=int, help="Upload size.", metavar="MB", default=32
+    )
+
+    args = parser.parse_args()
+
     console = Console(
         theme=Theme(
             {
@@ -73,8 +95,10 @@ def main():
         handlers=[RichHandler(console=console)],
     )
 
-    RichCloudflareDownload(128 * 1024 * 1024, console)
-    RichCloudflareUpload(32 * 1024 * 1024, console)
+    MB = 1024 * 1024
+
+    RichCloudflareDownload(args.download_size * MB, console)
+    RichCloudflareUpload(args.upload_size * MB, console)
 
 
 if __name__ == "__main__":
