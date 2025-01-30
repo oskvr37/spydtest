@@ -2,9 +2,31 @@
 
 from urllib3 import HTTPSConnectionPool
 from time import perf_counter
+from rich.theme import Theme
+from rich.console import Console
 from rich.progress import Progress, BarColumn, TextColumn
 
 from spydtest import __version__
+
+
+console = Console(
+    theme=Theme(
+        {
+            "down.icon": "magenta",
+            "down.text": "blue",
+            "down.bar.complete": "magenta",
+            "down.bar.finished": "blue",
+            "down.speed.value": "magenta",
+            "down.speed.unit": "blue",
+            "up.icon": "yellow",
+            "up.text": "red",
+            "up.bar.complete": "yellow",
+            "up.bar.finished": "red",
+            "up.speed.value": "yellow",
+            "up.speed.unit": "red",
+        }
+    )
+)
 
 
 def testDownload(
@@ -25,9 +47,12 @@ def testDownload(
     time_start = perf_counter()
 
     with Progress(
-        TextColumn("↓ Download"),
-        BarColumn(),
-        TextColumn("{task.fields[speed]} Mbps"),
+        TextColumn("[down.icon]↓ [down.text]Download"),
+        BarColumn(
+            complete_style="down.bar.complete", finished_style="down.bar.finished"
+        ),
+        TextColumn("[down.speed.value]{task.fields[speed]} [down.speed.unit]Mbps"),
+        console=console,
     ) as progress:
         task = progress.add_task("download", total=download_size, speed="0.00")
 
@@ -52,9 +77,12 @@ def testUpload(
         time_start = perf_counter()
 
         with Progress(
-            TextColumn("↑ Upload"),
-            BarColumn(),
-            TextColumn("{task.fields[speed]} Mbps"),
+            TextColumn("[up.icon]↑ [up.text]Upload"),
+            BarColumn(
+                complete_style="up.bar.complete", finished_style="up.bar.finished"
+            ),
+            TextColumn("[up.speed.value]{task.fields[speed]} [up.speed.unit]Mbps"),
+            console=console,
         ) as progress:
             task = progress.add_task("upload", total=upload_size, speed="0.00")
 
