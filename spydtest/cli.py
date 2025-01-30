@@ -85,7 +85,8 @@ def main():
                 "up.speed.value": "yellow",
                 "up.speed.unit": "red",
             }
-        )
+        ),
+        color_system=None
     )
 
     logging.basicConfig(
