@@ -58,13 +58,18 @@ def main():
         "--download-size",
         "-ds",
         type=int,
-        help="Download size.",
+        default=32,
         metavar="MB",
-        default=128,
+        help="Download size, default %(default)s %(metavar)s",
     )
 
     parser.add_argument(
-        "--upload-size", "-us", type=int, help="Upload size.", metavar="MB", default=32
+        "--upload-size",
+        "-us",
+        type=int,
+        default=8,
+        metavar="MB",
+        help="Upload size, default %(default)s %(metavar)s",
     )
 
     args = parser.parse_args()
@@ -86,7 +91,7 @@ def main():
                 "up.speed.unit": "red",
             }
         ),
-        color_system=None
+        color_system=None,
     )
 
     logging.basicConfig(
